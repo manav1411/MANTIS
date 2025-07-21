@@ -22,8 +22,6 @@ def loading_credentials(filepath):
         raise
 
 
-
-
 # loads emails from gmail inbox using IMAP and SSL
 # returns: IMAP mail object, containing all details
 def connect_to_gmail_imap(email, password):
@@ -31,20 +29,7 @@ def connect_to_gmail_imap(email, password):
     try:
         mail = imaplib.IMAP4_SSL(imap_url)
         mail.login(email, password)
-        mail.select('inbox')
         return mail
     except Exception as e:
         logging.error(f"failed to connect to gmail imap: {e}")
         raise
-
-
-
-
-
-def main():
-    email, password = loading_credentials('./email_creds.yaml')
-    mail = connect_to_gmail_imap(email, password)
-
-
-if __name__ == "__main__":
-    main()
