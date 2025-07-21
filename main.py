@@ -1,5 +1,5 @@
-from getmail import loading_credentials, connect_to_gmail_imap
-from parse_mail import n_recent_emails, tasks_from_emails, events_from_emails
+from app.getmail import loading_credentials, connect_to_gmail_imap
+from app.parse_mail import n_recent_emails, tasks_from_emails, events_from_emails
 
 from pprint import pprint
 
