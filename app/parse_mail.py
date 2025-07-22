@@ -2,6 +2,7 @@ import email
 import re
 from email.utils import parsedate_to_datetime
 from datetime import datetime
+from app.types import Task, Event
 
 # helper function - extracts just the body from a raw MIME email
 def extract_email_body(MIME_email):
@@ -49,11 +50,12 @@ def tasks_from_emails(MIME_emails):
 
         tasks = re.findall(r"\[task\](.+)", full_email_text, flags=re.IGNORECASE)
         for task in tasks:
-            task_list.append({
-                "task": task.strip(),
-                "created_at": parsedate_to_datetime(MIME_email["date"]),
-                "from": MIME_email["from"]
-            })
+            task_object = Task(
+                from_=MIME_email["from"],
+                task=task.strip(),
+                created_at=parsedate_to_datetime(MIME_email["date"])
+            )
+            task_list.append(task_object)
 
     return task_list
 
@@ -74,11 +76,13 @@ def events_from_emails(MIME_emails):
             except ValueError:
                 continue
             
-            event_list.append({
-                "event": event.strip(),
-                "remind_at": remind_at,
-                "created_at": parsedate_to_datetime(MIME_email["date"]),
-                "from": MIME_email["from"]
-            })
-            
+            event_object = Event(
+                from_=MIME_email["from"],
+                event=event.strip(),
+                created_at=parsedate_to_datetime(MIME_email["date"]),
+                remind_at=remind_at
+            )
+            event_list.append(event_object)
+
+
     return event_list
