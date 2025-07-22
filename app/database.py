@@ -2,7 +2,7 @@ import sqlite3
 import logging
 from app.types import Task, Event
 
-DB_PATH = "../MANTIS.db"
+DB_PATH = "./MANTIS.db"
 
 # Attempts to create and initialise the sqlite database.
 # returns True if successful, returns False if not
@@ -81,6 +81,29 @@ def view_all_tasks():
         logging.error(f"couldn't read tasks because: {e}")
         return []
 
+# marks task of given id as complete (1) or incomplete (0)
+def mark_task(task_id, status):
+    try:
+        with sqlite3.connect(DB_PATH) as connection:
+            cursor = connection.cursor()
+            cursor.execute('''
+                UPDATE tasks
+                SET is_done = ?
+                WHERE id = ?
+            ''', (status, task_id))
+
+            cursor.execute('select changes()')
+            changes = cursor.fetchone()[0]
+
+            if changes == 0:
+                logging.warning(f"No task updated with ID {task_id}. It may not exist.")
+                return False
+            else:
+                connection.commit()
+                return True
+    except Exception as e:
+        logging.error(f"couldn't mark task because: {e}")
+        return False
 
 
 # Attempts to insert a given event object into the events table in the db
@@ -105,6 +128,8 @@ def insert_event(event: Event):
         logging.error(f"couldn't insert event because: {e}")
         return False
 
+
+# returns a list of all events in the database
 def view_all_events():
     try:
         with sqlite3.connect(DB_PATH) as connection:
