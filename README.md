@@ -25,14 +25,19 @@ It parses incoming emails to automatically extract and manage tasks and reminder
 
 ## Screenshots
 
-![Interactive Shell](UP:OAD THIS)   TODO TODO TODO
+<img width="392" height="332" alt="Screenshot 2025-08-01 at 8 58 54 pm" src="https://github.com/user-attachments/assets/4091e300-487b-496b-93d7-06c9da20b389" />
+
 *Welcome screen with ASCII art and prompt*
 
-![Tasks List](UPLPAD THIOS)  
-*Viewing the list of tasks with statuses*
+<img width="745" height="307" alt="Screenshot 2025-08-01 at 8 59 08 pm" src="https://github.com/user-attachments/assets/aee25359-023e-4dd5-b508-503db6730804" />
 
-![Fetch Command](UPLOAD THIS)  
-*Fetching and parsing recent emails*
+
+*List of all commands via the help menu*
+
+<img width="1023" height="624" alt="Screenshot 2025-08-01 at 9 04 20 pm" src="https://github.com/user-attachments/assets/813b1cb1-0c33-4d4a-bbc8-c3d03099d6ef" />
+
+
+*Fetching emails, viewing tasks from those emails, marking tasks as done*
 
 ---
 
