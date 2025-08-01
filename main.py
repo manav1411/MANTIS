@@ -1,5 +1,5 @@
 from app.getmail import loading_credentials, connect_to_gmail_imap
-from app.parse_mail import n_recent_emails, tasks_from_emails, events_from_emails
+from app.parse_mail import n_recent_emails, tasks_from_emails, events_from_emails, extract_email_body, intellegent_parse_email
 from app.database import database_init, insert_task, mark_task, view_all_tasks, insert_event, view_all_events
 from pprint import pprint
 
@@ -61,6 +61,13 @@ def interactive_shell():
                 continue
             email_tasks = tasks_from_emails(MIME_emails)
             email_events = events_from_emails(MIME_emails)
+
+            # use NLP to detect more tasks and events
+            for mime_email in MIME_emails:
+                if not any(marker in extract_email_body(mime_email) for marker in ["[task]", "[remind:]"]):
+                    nlp_tasks, nlp_events = intellegent_parse_email(mime_email)
+                    email_tasks.extend(nlp_tasks)
+                    email_events.extend(nlp_events)
 
             # insert tasks and events into db
             task_count, event_count = len(email_tasks), len(email_events)

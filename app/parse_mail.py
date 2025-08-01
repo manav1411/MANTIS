@@ -1,5 +1,7 @@
 import email
 import re
+import spacy
+from dateparser import parse as parse_date
 from email.utils import parsedate_to_datetime
 from datetime import datetime
 from app.types import Task, Event
@@ -86,3 +88,46 @@ def events_from_emails(MIME_emails):
 
 
     return event_list
+
+
+# uses an NLP library to parse AN email and returns likely tasks and events
+def intellegent_parse_email(MIME_email):
+    tasks, events = [], []
+
+    # parse MIME to be NLP readable format
+    email_subject = MIME_email["subject"] or ""
+    email_body = extract_email_body(MIME_email)
+    full_text = email_subject + email_body
+    nlp = spacy.load("en_core_web_sm")
+    document = nlp(full_text)
+
+    for sent in document.sents:
+        text = sent.text.strip()
+
+        # 1: does it sound like a task? (verb root sentence, like 'buy')
+        if sent.root.tag_ == "VB" or sent.root.tag_ == "VBJ":
+            tasks.append(Task(
+                from_=MIME_email["from"],
+                task=text,
+                created_at=parsedate_to_datetime(MIME_email["date"])
+            ))
+
+        # 2: does it sound like an event? (mentions date or time)
+        for ent in sent.ents:
+            if ent.label_ in ["DATE", "TIME"]:
+                try:
+                    parsed_datetime = parse_date(ent.text)
+                    if parsed_datetime:
+                        events.append(Event(
+                            from_=MIME_email["from"],
+                            event=text,
+                            created_at=parsedate_to_datetime(MIME_email["date"]),
+                            remind_at=parsed_datetime
+                        ))
+                    break
+                except:
+                    continue
+
+
+
+    return tasks, events
