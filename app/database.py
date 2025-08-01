@@ -142,3 +142,17 @@ def view_all_events():
     except Exception as e:
         logging.error(f"couldn't read events because: {e}")
         return []
+
+
+# removes all events and tasks from database
+def clear_database():
+    try:
+        with sqlite3.connect(DB_PATH) as connection:
+            cursor = connection.cursor()
+            cursor.execute('DELETE FROM TASKS')
+            cursor.execute('DELETE FROM EVENTS')
+            connection.commit
+        return True
+    except Exception as e:
+        logging.error(f"couldn't clear database because: {e}")
+        return False
